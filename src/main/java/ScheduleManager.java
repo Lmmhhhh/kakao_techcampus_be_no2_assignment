@@ -1,12 +1,13 @@
+import controller.ScheduleController;
 import dto.ScheduleRequest_Lv1;
 import dto.ScheduleSearchCondition_Lv1;
 import dto.ScheduleUpdateRequest_Lv2;
-import dto.ScheduleDeleteRequest_Lv2;
 import repository.ScheduleRepository;
 import repository.ScheduleRepositoryImplement;
 import service.ScheduleService;
 import service.ScheduleServiceImplement;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -14,8 +15,10 @@ import java.util.Scanner;
 public class ScheduleManager {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         ScheduleRepository repository = new ScheduleRepositoryImplement();
         ScheduleService scheduleService = new ScheduleServiceImplement(repository);
+        ScheduleController controller = new ScheduleController(scheduleService);
 
         while (true) {
             System.out.println("\n==== 일정 관리 프로그램 ====");
@@ -43,7 +46,7 @@ public class ScheduleManager {
                         LocalDateTime scheduledDate = LocalDateTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
                         ScheduleRequest_Lv1 request = new ScheduleRequest_Lv1(title, writer, password, scheduledDate);
-                        scheduleService.createSchedule(request);
+                        controller.createSchedule(request);
                         break;
 
                     case "2":
@@ -53,19 +56,22 @@ public class ScheduleManager {
                         System.out.print("수정일 (yyyy-MM-dd, 생략 가능): ");
                         String modifiedDateInput = scanner.nextLine();
 
-                        ScheduleSearchCondition_Lv1 condition = new ScheduleSearchCondition_Lv1(
-                                writerFilter.isEmpty() ? null : writerFilter,
-                                modifiedDateInput.isEmpty() ? null : LocalDateTime.parse(modifiedDateInput + "T00:00:00")
-                        );
-
-                        scheduleService.searchAllSchedules(condition).forEach(System.out::println);
+                        // ScheduleSearchCondition_Lv1 생성 시 날짜 타입 맞추기
+                        ScheduleSearchCondition_Lv1 condition;
+                        if (modifiedDateInput.isEmpty()) {
+                            condition = new ScheduleSearchCondition_Lv1(writerFilter.isEmpty() ? null : writerFilter, null);
+                        } else {
+                            LocalDate modifiedDate = LocalDate.parse(modifiedDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            condition = new ScheduleSearchCondition_Lv1(writerFilter.isEmpty() ? null : writerFilter, modifiedDate);
+                        }
+                        controller.searchSchedules(condition);
                         break;
 
                     case "3":
                         // 단건 일정 조회
                         System.out.print("조회할 일정 ID: ");
                         Long id = Long.parseLong(scanner.nextLine());
-                        System.out.println(scheduleService.searchScheduleById(id));
+                        controller.findScheduleById(id);
                         break;
 
                     case "4":
@@ -79,8 +85,8 @@ public class ScheduleManager {
                         System.out.print("새 작성자명: ");
                         String newWriter = scanner.nextLine();
 
-                        ScheduleUpdateRequest_Lv2 updateRequest = new ScheduleUpdateRequest_Lv2(newTitle, newWriter);
-                        scheduleService.updateSchedule(updateId, updatePassword, updateRequest);
+                        ScheduleUpdateRequest_Lv2 updateRequest = new ScheduleUpdateRequest_Lv2(newTitle, newWriter, updatePassword);
+                        controller.updateSchedule(updateId, updatePassword, updateRequest);
                         break;
 
                     case "5":
@@ -90,7 +96,7 @@ public class ScheduleManager {
                         System.out.print("비밀번호: ");
                         String deletePassword = scanner.nextLine();
 
-                        scheduleService.deleteSchedule(deleteId, deletePassword);
+                        controller.deleteSchedule(deleteId, deletePassword);
                         break;
 
                     case "0":

@@ -1,6 +1,5 @@
 package controller;
 
-import dto.ScheduleDeleteRequest_Lv2;
 import dto.ScheduleRequest_Lv1;
 import dto.ScheduleResponse_Lv1;
 import dto.ScheduleSearchCondition_Lv1;
