@@ -56,15 +56,5 @@ Instead, it uses a **password-based** verification method:
 - The user must include the correct `password` in the body when updating or deleting a schedule.
 - Passwords are never returned in API responses.
 
-### Authentication Error Response
-
-```json
-// 잘못된 비밀번호
-{
-  "error": "Password does not match."
-}
-
-// 존재하지 않는 일정
-{
-  "error": "Schedule not found."
-}
+##ERD
+![Image](https://github.com/user-attachments/assets/25f308d6-bdb6-4345-b631-da3b8ead65af)
