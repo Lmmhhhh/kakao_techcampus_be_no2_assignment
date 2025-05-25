@@ -104,9 +104,9 @@ public class ScheduleRepositoryImplement implements ScheduleRepository {
     }
 
     @Override
-    public void update(Long id, String password, ScheduleUpdateRequest_Lv2 request) {
+    public void update(Long id, ScheduleUpdateRequest_Lv2 request) {
         String sql = "UPDATE schedule SET title = ?, writer = ?, modified_at = NOW() " +
-                "WHERE id = ? AND password = ?";
+                "WHERE id = ?";
 
         try (Connection conn = DBconnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -114,11 +114,10 @@ public class ScheduleRepositoryImplement implements ScheduleRepository {
             pstmt.setString(1, request.getTitle());
             pstmt.setString(2, request.getWriter());
             pstmt.setLong(3, id);
-            pstmt.setString(4, password);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
-                throw new RuntimeException("ID와 비밀번호가 일치하는 일정을 찾을 수 없습니다.");
+                throw new RuntimeException("해당 ID의 일정을 찾을 수 없습니다.");
             }
 
         } catch (SQLException e) {
@@ -127,14 +126,13 @@ public class ScheduleRepositoryImplement implements ScheduleRepository {
     }
 
     @Override
-    public void delete(Long id, String password) {
-        String sql = "DELETE FROM schedule WHERE id = ? AND password = ?";
+    public void delete(Long id) {
+        String sql = "DELETE FROM schedule WHERE id = ? ";
 
         try (Connection conn = DBconnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, id);
-            pstmt.setString(2, password);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -145,6 +143,25 @@ public class ScheduleRepositoryImplement implements ScheduleRepository {
             throw new RuntimeException("일정 삭제 중 오류가 발생했습니다.", e);
         }
     }
+
+    @Override
+    public String findPasswordById(Long id) {
+        String sql = "SELECT password FROM schedule WHERE id = ?";
+        try (Connection conn = DBconnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password");
+                } else {
+                    throw new RuntimeException("해당 ID의 일정을 찾을 수 없습니다.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("비밀번호 조회 중 오류 발생", e);
+        }
+    }
+
 
     private ScheduleResponse_Lv1 mapToResponse(ResultSet rs) throws SQLException {
         return new ScheduleResponse_Lv1(

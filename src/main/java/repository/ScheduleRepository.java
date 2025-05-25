@@ -10,6 +10,7 @@ public interface ScheduleRepository {
     Long save(ScheduleRequest_Lv1 request);
     ScheduleResponse_Lv1 findById(Long id);
     List<ScheduleResponse_Lv1> findAllByCondition(ScheduleSearchCondition_Lv1 condition);
-    void update(Long id, String password, ScheduleUpdateRequest_Lv2 request);
-    void delete(Long id, String password);
+    void update(Long id, ScheduleUpdateRequest_Lv2 request);
+    void delete(Long id);
+    String findPasswordById(Long id);
 }

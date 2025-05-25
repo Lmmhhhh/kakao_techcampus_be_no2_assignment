@@ -16,7 +16,7 @@ public class ScheduleServiceImplement implements ScheduleService {
 
     @Override
     public Long createSchedule(ScheduleRequest_Lv1 request) {
-         return scheduleRepository.save(request);
+        return scheduleRepository.save(request);
     }
 
     @Override
@@ -31,11 +31,19 @@ public class ScheduleServiceImplement implements ScheduleService {
 
     @Override
     public void updateSchedule(Long id, String password, ScheduleUpdateRequest_Lv2 request) {
-        scheduleRepository.update(id, password, request);
+        String realPassword = scheduleRepository.findPasswordById(id);
+        if (!realPassword.equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        scheduleRepository.update(id, request);
     }
 
     @Override
     public void deleteSchedule(Long id, String password) {
-        scheduleRepository.delete(id, password);
+        String realPassword = scheduleRepository.findPasswordById(id);
+        if (!realPassword.equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        scheduleRepository.delete(id);
     }
 }
