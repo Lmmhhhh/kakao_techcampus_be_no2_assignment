@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBconnection {
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/schedulemanager?serverTimezone=Asia/Seoul";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/schedule?serverTimezone=Asia/Seoul";
     private static final String USER = "root";
     private static final String PASSWORD = "804009";
 

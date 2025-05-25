@@ -20,6 +20,18 @@ public class ScheduleResponse_Lv1 {
         this.modifiedAt = modifiedAt;
     }
 
+    @Override
+    public String toString() {
+        return
+                "{id=" + id +
+                ", title='" + title + '\'' +
+                ", writer='" + writer + '\'' +
+                ", scheduledDate=" + scheduledDate +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

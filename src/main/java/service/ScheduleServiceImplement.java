@@ -15,8 +15,8 @@ public class ScheduleServiceImplement implements ScheduleService {
     }
 
     @Override
-    public void createSchedule(ScheduleRequest_Lv1 request) {
-        scheduleRepository.save(request);
+    public Long createSchedule(ScheduleRequest_Lv1 request) {
+         return scheduleRepository.save(request);
     }
 
     @Override

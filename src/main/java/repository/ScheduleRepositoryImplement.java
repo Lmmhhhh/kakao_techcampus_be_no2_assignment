@@ -13,21 +13,26 @@ import java.util.List;
 public class ScheduleRepositoryImplement implements ScheduleRepository {
 
     @Override
-    public void save(ScheduleRequest_Lv1 request) {
-        String sql = "INSERT INTO schedule (title, writer, password, scheduled_date, created_at, modified_at) " +
-                "VALUES (?, ?, ?, ?, NOW(), NOW())";
-
+    public Long save(ScheduleRequest_Lv1 request) {
+        String sql = "INSERT INTO schedule (title, writer, password, scheduled_date, created_at, modified_at) VALUES (?, ?, ?, ?, NOW(), NOW())";
         try (Connection conn = DBconnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, request.getTitle());
             pstmt.setString(2, request.getWriter());
             pstmt.setString(3, request.getPassword());
             pstmt.setTimestamp(4, Timestamp.valueOf(request.getScheduledDate()));
+
             pstmt.executeUpdate();
 
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                } else {
+                    throw new RuntimeException("일정 ID 생성 실패");
+                }
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("일정 저장 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("일정 저장 실패", e);
         }
     }
 

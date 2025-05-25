@@ -18,8 +18,8 @@ public class ScheduleController {
 
     // 일정 등록
     public void createSchedule(ScheduleRequest_Lv1 request) {
-        scheduleService.createSchedule(request);
-        System.out.println("일정이 성공적으로 등록되었습니다.");
+        Long id = scheduleService.createSchedule(request);
+        System.out.println("일정이 성공적으로 등록되었습니다. 등록된 일정 id: " + id);
     }
 
     // 단건 조회
