@@ -56,5 +56,17 @@ Instead, it uses a **password-based** verification method:
 - The user must include the correct `password` in the body when updating or deleting a schedule.
 - Passwords are never returned in API responses.
 
-##ERD
+## Example
+ 이미지로 대체 
+ ![스크린샷 2025-05-25 234015](https://github.com/user-attachments/assets/7d141d12-f61e-438b-b1ad-c045237c85c6)
+![스크린샷 2025-05-25 234031](https://github.com/user-attachments/assets/58e62bc9-4697-4e31-a8f0-99ab0add5dbf)
+![스크린샷 2![스크린샷 2025-05-25 234045](https://github.com/user-attachments/assets/034ad813-3ce1-414e-835f-1a1dc7107cd6)
+025-05-25 234045](https://github.com/user-attachments/assets/210fc7b8-3c96-4fb3-98b1-6b10de6a28e5)
+![스크린샷 2025-05-25 234131](https://github.com/user-attachments/assets/954b1308-41dc-4fa6-8649-e56455777f57)
+
+
+## ERD
 ![Image](https://github.com/user-attachments/assets/25f308d6-bdb6-4345-b631-da3b8ead65af)
+
+
+
