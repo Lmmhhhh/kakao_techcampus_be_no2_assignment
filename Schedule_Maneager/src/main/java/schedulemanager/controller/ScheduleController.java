@@ -11,6 +11,8 @@ import schedulemanager.dto.ScheduleUpdateRequest_Lv2;
 import schedulemanager.dto.ScheduleDeleteRequest_Lv2;
 import schedulemanager.service.ScheduleService;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,14 +29,14 @@ public class ScheduleController {
 
     // 일정 등록
     @PostMapping
-    public ResponseEntity<Integer> createSchedule(@RequestBody ScheduleRequest_Lv3 request) {
-        try {
-            System.out.println("요청 JSON = " + objectMapper.writeValueAsString(request));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    public ResponseEntity<Map<String, Object>> createSchedule(@RequestBody ScheduleRequest_Lv3 request) {
         int scheduleId = scheduleService.createSchedule(request);
-        return ResponseEntity.ok(scheduleId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", scheduleId);
+        response.put("message", "일정 등록 성공");
+
+        return ResponseEntity.ok(response);
     }
 
     // 단건 조회
