@@ -2,17 +2,19 @@ package dto;
 
 import java.time.LocalDateTime;
 
-public class ScheduleResponse_Lv1 {
+public class ScheduleResponse_Lv3 {
     private int scheduleId;
+    private int userId;
     private String title;
     private String writer;
-    private LocalDateTime scheduledDate;     // 추가됨
+    private LocalDateTime scheduledDate;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public ScheduleResponse_Lv1(int scheduleId, String title, String writer, LocalDateTime scheduledDate,
+    public ScheduleResponse_Lv3(int scheduleId, int userId, String title, String writer, LocalDateTime scheduledDate,
                                 LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.scheduleId = scheduleId;
+        this.userId = userId;
         this.title = title;
         this.writer = writer;
         this.scheduledDate = scheduledDate;
@@ -22,8 +24,8 @@ public class ScheduleResponse_Lv1 {
 
     @Override
     public String toString() {
-        return
-                "{scheduleId=" + scheduleId +
+        return "{scheduleId=" + scheduleId +
+                ", userId=" + userId +
                 ", title='" + title + '\'' +
                 ", writer='" + writer + '\'' +
                 ", scheduledDate=" + scheduledDate +
@@ -32,8 +34,12 @@ public class ScheduleResponse_Lv1 {
                 '}';
     }
 
-    public int getScheduleIdId() {
+    public int getScheduleId() {
         return scheduleId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getTitle() {

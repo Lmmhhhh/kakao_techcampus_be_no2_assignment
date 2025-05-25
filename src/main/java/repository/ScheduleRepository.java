@@ -1,16 +1,17 @@
 package repository;
 
-import dto.ScheduleRequest_Lv1;
-import dto.ScheduleResponse_Lv1;
-import dto.ScheduleSearchCondition_Lv1;
+import dto.ScheduleRequest_Lv3;
+import dto.ScheduleResponse_Lv3;
+import dto.ScheduleSearchCondition_Lv3;
 import dto.ScheduleUpdateRequest_Lv2;
+
 import java.util.List;
 
 public interface ScheduleRepository {
-    Long save(ScheduleRequest_Lv1 request);
-    ScheduleResponse_Lv1 findById(Long id);
-    List<ScheduleResponse_Lv1> findAllByCondition(ScheduleSearchCondition_Lv1 condition);
-    void update(Long id, ScheduleUpdateRequest_Lv2 request);
-    void delete(Long id);
-    String findPasswordById(Long id);
+    int save(int userId, ScheduleRequest_Lv3 request); // user_id를 반드시 받아야 함
+    ScheduleResponse_Lv3 findById(int scheduleId);
+    List<ScheduleResponse_Lv3> findAllByCondition(ScheduleSearchCondition_Lv3 condition);
+    void update(int scheduleId, ScheduleUpdateRequest_Lv2 request);
+    void delete(int scheduleId);
+    String findPasswordById(int scheduleId);
 }

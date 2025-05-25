@@ -1,49 +1,64 @@
 package service;
 
-import dto.ScheduleRequest_Lv1;
-import dto.ScheduleResponse_Lv1;
-import dto.ScheduleSearchCondition_Lv1;
+import dto.ScheduleRequest_Lv3;
+import dto.ScheduleResponse_Lv3;
+import dto.ScheduleSearchCondition_Lv3;
 import dto.ScheduleUpdateRequest_Lv2;
 import repository.ScheduleRepository;
+import repository.UserRepository_Lv3;
+
 import java.util.List;
 
 public class ScheduleServiceImplement implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository_Lv3 userRepository;
 
-    public ScheduleServiceImplement(ScheduleRepository scheduleRepository) {
+    public ScheduleServiceImplement(ScheduleRepository scheduleRepository,
+                                    UserRepository_Lv3 userRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public Long createSchedule(ScheduleRequest_Lv1 request) {
-        return scheduleRepository.save(request);
+    public int createSchedule(ScheduleRequest_Lv3 request) {
+        var existing = userRepository.findByEmail(request.getEmail());
+        int userId;
+
+        if (existing == null) {
+            var newUser = new repository.User_Lv3(request.getWriter(), request.getEmail());
+            userId = userRepository.save(newUser);
+        } else {
+            userId = existing.getUserId();
+        }
+
+        return scheduleRepository.save(userId, request);
     }
 
     @Override
-    public List<ScheduleResponse_Lv1> searchAllSchedules(ScheduleSearchCondition_Lv1 condition) {
-        return scheduleRepository.findAllByCondition(condition);
+    public List<ScheduleResponse_Lv3> searchAllSchedules(ScheduleSearchCondition_Lv3 c) {
+        return scheduleRepository.findAllByCondition(c);
     }
 
     @Override
-    public ScheduleResponse_Lv1 searchScheduleById(Long id) {
-        return scheduleRepository.findById(id);
+    public ScheduleResponse_Lv3 searchScheduleById(int scheduleId) {
+        return scheduleRepository.findById(scheduleId);
     }
 
     @Override
-    public void updateSchedule(Long id, String password, ScheduleUpdateRequest_Lv2 request) {
-        String realPassword = scheduleRepository.findPasswordById(id);
+    public void updateSchedule(int scheduleId, String password, ScheduleUpdateRequest_Lv2 req) {
+        String realPassword = scheduleRepository.findPasswordById(scheduleId);
         if (!realPassword.equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        scheduleRepository.update(id, request);
+        scheduleRepository.update(scheduleId, req);
     }
 
     @Override
-    public void deleteSchedule(Long id, String password) {
-        String realPassword = scheduleRepository.findPasswordById(id);
+    public void deleteSchedule(int scheduleId, String password) {
+        String realPassword = scheduleRepository.findPasswordById(scheduleId);
         if (!realPassword.equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        scheduleRepository.delete(id);
+        scheduleRepository.delete(scheduleId);
     }
 }

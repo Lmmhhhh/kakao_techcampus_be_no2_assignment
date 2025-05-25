@@ -1,9 +1,11 @@
 import controller.ScheduleController;
-import dto.ScheduleRequest_Lv1;
-import dto.ScheduleSearchCondition_Lv1;
+import dto.ScheduleRequest_Lv3;
+import dto.ScheduleSearchCondition_Lv3;
 import dto.ScheduleUpdateRequest_Lv2;
 import repository.ScheduleRepository;
 import repository.ScheduleRepositoryImplement;
+import repository.UserRepository_Lv3;
+import repository.UserRepositoryImplement_Lv3;
 import service.ScheduleService;
 import service.ScheduleServiceImplement;
 
@@ -16,8 +18,10 @@ public class ScheduleManager {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        ScheduleRepository repository = new ScheduleRepositoryImplement();
-        ScheduleService scheduleService = new ScheduleServiceImplement(repository);
+        ScheduleRepository scheduleRepo = new ScheduleRepositoryImplement();
+        UserRepository_Lv3 userRepo = new UserRepositoryImplement_Lv3();
+        ScheduleService scheduleService =
+                new ScheduleServiceImplement(scheduleRepo, userRepo);
         ScheduleController controller = new ScheduleController(scheduleService);
 
         while (true) {
@@ -40,44 +44,56 @@ public class ScheduleManager {
                         String title = scanner.nextLine();
                         System.out.print("작성자명: ");
                         String writer = scanner.nextLine();
+                        System.out.print("이메일: ");
+                        String email = scanner.nextLine();
                         System.out.print("비밀번호: ");
                         String password = scanner.nextLine();
                         System.out.print("일정 날짜 (yyyy-MM-dd HH:mm): ");
-                        LocalDateTime scheduledDate = LocalDateTime.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                        LocalDateTime scheduledDate = LocalDateTime.parse(
+                                scanner.nextLine(),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                        );
 
-                        ScheduleRequest_Lv1 request = new ScheduleRequest_Lv1(title, writer, password, scheduledDate);
+                        ScheduleRequest_Lv3 request = new ScheduleRequest_Lv3(
+                                title, writer, email, password, scheduledDate
+                        );
                         controller.createSchedule(request);
                         break;
 
                     case "2":
                         // 전체 일정 조회
-                        System.out.print("작성자명 (생략 가능): ");
-                        String writerFilter = scanner.nextLine();
+                        System.out.print("작성자 ID (생략 가능): ");
+                        String userIdInput = scanner.nextLine();
                         System.out.print("수정일 (yyyy-MM-dd, 생략 가능): ");
                         String modifiedDateInput = scanner.nextLine();
 
-                        // ScheduleSearchCondition_Lv1 생성 시 날짜 타입 맞추기
-                        ScheduleSearchCondition_Lv1 condition;
-                        if (modifiedDateInput.isEmpty()) {
-                            condition = new ScheduleSearchCondition_Lv1(writerFilter.isEmpty() ? null : writerFilter, null);
+                        ScheduleSearchCondition_Lv3 condition;
+                        Integer userId = userIdInput.isBlank() ? null : Integer.parseInt(userIdInput);
+
+                        if (modifiedDateInput.isBlank()) {
+                            condition = new ScheduleSearchCondition_Lv3(userId, null);
                         } else {
-                            LocalDate modifiedDate = LocalDate.parse(modifiedDateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                            condition = new ScheduleSearchCondition_Lv1(writerFilter.isEmpty() ? null : writerFilter, modifiedDate);
+                            LocalDate modifiedDate = LocalDate.parse(
+                                    modifiedDateInput,
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                            );
+                            condition = new ScheduleSearchCondition_Lv3(userId, modifiedDate);
                         }
+
                         controller.searchSchedules(condition);
                         break;
 
                     case "3":
                         // 단건 일정 조회
                         System.out.print("조회할 일정 ID: ");
-                        Long id = Long.parseLong(scanner.nextLine());
+                        int id = Integer.parseInt(scanner.nextLine());
                         controller.findScheduleById(id);
                         break;
 
                     case "4":
                         // 일정 수정
                         System.out.print("수정할 일정 ID: ");
-                        Long updateId = Long.parseLong(scanner.nextLine());
+                        int updateId = Integer.parseInt(scanner.nextLine());
                         System.out.print("비밀번호: ");
                         String updatePassword = scanner.nextLine();
                         System.out.print("새 제목: ");
@@ -85,14 +101,16 @@ public class ScheduleManager {
                         System.out.print("새 작성자명: ");
                         String newWriter = scanner.nextLine();
 
-                        ScheduleUpdateRequest_Lv2 updateRequest = new ScheduleUpdateRequest_Lv2(newTitle, newWriter, updatePassword);
+                        ScheduleUpdateRequest_Lv2 updateRequest = new ScheduleUpdateRequest_Lv2(
+                                newTitle, newWriter, updatePassword
+                        );
                         controller.updateSchedule(updateId, updatePassword, updateRequest);
                         break;
 
                     case "5":
                         // 일정 삭제
                         System.out.print("삭제할 일정 ID: ");
-                        Long deleteId = Long.parseLong(scanner.nextLine());
+                        int deleteId = Integer.parseInt(scanner.nextLine());
                         System.out.print("비밀번호: ");
                         String deletePassword = scanner.nextLine();
 
